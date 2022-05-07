@@ -20,11 +20,6 @@ export class TodosAccess {
     async getTodosForUser(userId: string): Promise<TodoItem[]> {
         logger.info('call TodosAccess.getTodosForUser');
 
-        // const result = await this.docClient.scan({
-        //     TableName: this.todosTable,
-        //     FilterExpression: 'userId = :userId',
-        //     ExpressionAttributeValues: { ':userId': userId }
-        // }).promise()
         const params = {
             TableName: this.todosTable,
             KeyConditionExpression: "#DYNOBASE_userId = :pkey",
@@ -62,13 +57,14 @@ export class TodosAccess {
                 userId: userId,
                 todoId: todoId
             },
-            UpdateExpression: 'set #dynobase_name = :name, dueDate = :dueDate, done = :done',
+            UpdateExpression: 'set #dynobase_name = :name, description = :description, dueDate = :dueDate, #dynobase_status = :status',
             ExpressionAttributeValues: {
                 ':name': todoUpdate.name,
+                ':description': todoUpdate.description,
                 ':dueDate': todoUpdate.dueDate,
-                ':done': todoUpdate.done,
+                ':status': todoUpdate.status,
             },
-            ExpressionAttributeNames: { "#dynobase_name": "name" }
+            ExpressionAttributeNames: { "#dynobase_name": "name", "#dynobase_status": "status" }
         };
 
         await this.docClient.update(params, function (err, data) {

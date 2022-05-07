@@ -23,7 +23,7 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
     userId,
     todoId,
     createdAt,
-    done: false,
+    status: 0,
     ...newTodo,
     attachmentUrl: ''
   }
